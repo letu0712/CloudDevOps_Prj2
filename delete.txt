@@ -1,0 +1,2 @@
+aws cloudformation delete-stack --stack-name mynetwork --region us-east-1 
+aws cloudformation delete-stack --stack-name myudagram --region us-east-1 

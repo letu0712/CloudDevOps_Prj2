@@ -12,3 +12,6 @@
 ## Other considerations
 ./delete.sh myudargam
 ./delete.sh mynetwork
+
+## Endpoint URL website
+http://udacity-s3-tulx-bucket.s3-website-us-east-1.amazonaws.com

@@ -2,13 +2,5 @@
     {
         "ParameterKey": "EnvironmentName",
         "ParameterValue": "UdacityProject2"
-    },
-    {
-        "ParameterKey": "RdsMasterUsername",
-        "ParameterValue": "tulx"
-    },
-    {
-        "ParameterKey": "RdsMasterPassword",
-        "ParameterValue": "123456789"
     }
 ]
