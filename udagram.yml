@@ -47,12 +47,15 @@ Resources:
           Fn::Base64: !Sub |
             #!/bin/bash
             sudo apt-get update -y
-            sudo apt-get install nginx -y
-            sudo service nginx start
+            sudo apt-get install unzip awscli -y
+            sudo apt-get install apache2 -y
+            systemctl start apache2.service
+            cd /var/www/html
+            aws s3 cp s3://tulxbucket/index.htnl
         ImageId: ami-0557a15b87f6559cf
         SecurityGroupIds:
           - !Ref WebServerSecGroup
-        InstanceType: t2.micro
+        InstanceType: t3.medium
         BlockDeviceMappings:
         - DeviceName: "/dev/sdk"
           Ebs:
@@ -82,7 +85,7 @@ Resources:
               Action:
               - 's3:GetObject'
               Resource:
-                - !Sub "arn:aws:s3:::mybucket/*"
+                - !Sub "arn:aws:s3:::tulxbucket/*"
 
   WebAppInstanceProfile:
     Type: AWS::IAM::InstanceProfile
@@ -153,26 +156,12 @@ Resources:
       VpcId: 
         Fn::ImportValue:
           Fn::Sub: "${EnvironmentName}-VPCID"
+  
+Outputs:
+  LoadBanlancerEndpoint: 
+      Description: This endpoint is used to reach the loadbalancer.
+      Value: !Join [ "", [ 'http://', !GetAtt WebAppLB.DNSName  ]]
+      Export:
+        Name: !Sub ${EnvironmentName}-LBENDPOINT
 
-# ====================S3=========================
-  S3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub "udacity-s3-tulx-bucket"
-      AccessControl: Private
-      VersioningConfiguration:
-        Status: Enabled
-      LifecycleConfiguration:
-        Rules:
-          - Status: "Enabled"
-            NoncurrentVersionExpirationInDays: 10
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
-      # protect against accidental exposure of private files in a bucket. It provides four blocking policies enforcing private access to your files.
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        IgnorePublicAcls: true
-        BlockPublicPolicy: true
-        RestrictPublicBuckets: true
+
